@@ -1,4 +1,12 @@
+"""
+This tool basically converts json to cbor and vice versa
+"""
 import cbor, json, sys, getopt
+__author__ = "Rami Alshafi"
+__email__ = "ralshafi@vtmgroup.com"
+__copyright__ = "Copyright 2017, VTM Group"
+__version__ = "0.0.1"
+__status__ = "alpha"
 
 
 def main(argv):
@@ -53,7 +61,7 @@ def write_cbor(json_dict, output_file):
 
 
 def write_json(cbor_dict, output_file):
-    json_data = json.dumps(cbor_dict, sort_keys=True, indent=4)
+    json_data = json.dumps(cbor_dict, sort_keys=True, indent=4, encoding='latin1')
     with open(output_file, 'wb') as json_file:
         json_file.write(json_data)
     return True
