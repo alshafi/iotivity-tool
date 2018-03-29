@@ -5,7 +5,7 @@ platform_info = p.platform()
 raspberry_pi = 'Linux' in platform_info and \
 ('armv7l' in platform_info or 'armv6l' in platform_info) and \
 'debian' in platform_info
-home_dir = r'/home/pi' if raspberry_pi else 'r/home/rami'
+home_dir = r'/home/pi' if raspberry_pi else r'/home/rami'
 arch = r'arm' if raspberry_pi else r'x86_64'
 
 iotivity_root = home_dir + r'/iot/iotivity'

@@ -41,9 +41,20 @@ def read_cbor(input_file):
     cbor_dict = dict()
     with open(input_file, 'rb') as fp:
         data = cbor.load(fp)
-    for sec, val in data.iteritems():
-        cbor_dict[sec] = cbor.loads(val)
+        traverse(data, cbor_dict)
     return cbor_dict
+
+
+def traverse(in_dict, out_dict):
+    # base case?
+    if not isinstance(in_dict, dict):
+        return
+    for sec, val in in_dict.iteritems():
+        if isinstance(val, str):
+            out_dict[sec] = cbor.loads(val)
+        else:
+            out_dict[sec] = val
+        traverse(out_dict[sec], out_dict[sec])
 
 
 def read_json(input_file):
