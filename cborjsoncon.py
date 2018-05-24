@@ -15,25 +15,25 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, 'hi:o:')
     except getopt.GetoptError:
-        print 'cbor2json.py -i <input_file> -o <output_file>'
+        print ('cbor2json.py -i <input_file> -o <output_file>')
         sys.exit(2)
     if len(opts) == 0:
-        print 'cbor2json.py -i <input_file> -o <output_file>'
+        print ('cbor2json.py -i <input_file> -o <output_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'cbor2json.py -i <input_file> -o <output_file>'
+            print ('cbor2json.py -i <input_file> -o <output_file>')
             sys.exit()
         elif opt == '-i':
             input_file = arg
         elif opt == '-o':
             output_file = arg
-    print 'input file is <{}> and output file is <{}>'.format(input_file, output_file)
+    print ('input file is <{}> and output file is <{}>'.format(input_file, output_file))
     if input_file.endswith('.dat') and output_file.endswith('.json'):
-        print 'converting cbor to json'
+        print ('converting cbor to json')
         write_json(read_cbor(input_file), output_file)
     elif input_file.endswith('.json') and output_file.endswith('.dat'):
-        print 'converting json to cbor... not tested feature yet'
+        print ('converting json to cbor... not tested feature yet')
         write_cbor(read_json(input_file), output_file)
 
 
