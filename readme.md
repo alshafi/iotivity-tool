@@ -2,7 +2,7 @@
 
 The cborjsoncon.py is a tool to convert the IOTivity security virtual resources (SVR) database from json file to cbor and vice versa.
 
-##Motivation
+## Motivation
 Prior to making this tool, I used to use the [json2cbor](https://github.com/iotivity/iotivity/blob/master/resource/csdk/security/tool/json2cbor.c) tool that ships with IoTivity to convert the SVR from json to cbor and [cbor.me](cbor.me) to convert the other way.
 json2cbor needed to be built before I could use it and python would be hany as it could run on multiple systems without compiling for a specific target.
 However, the pressing reason for making this tool was converting cbor back to json which required the following steps:
