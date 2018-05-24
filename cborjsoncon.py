@@ -15,14 +15,14 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, 'hi:o:')
     except getopt.GetoptError:
-        print ('cbor2json.py -i <input_file> -o <output_file>')
+        print('cbor2json.py -i <input_file> -o <output_file>')
         sys.exit(2)
     if len(opts) == 0:
-        print ('cbor2json.py -i <input_file> -o <output_file>')
+        print('cbor2json.py -i <input_file> -o <output_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print ('cbor2json.py -i <input_file> -o <output_file>')
+            print('cbor2json.py -i <input_file> -o <output_file>')
             sys.exit()
         elif opt == '-i':
             input_file = arg
@@ -30,11 +30,13 @@ def main(argv):
             output_file = arg
     print ('input file is <{}> and output file is <{}>'.format(input_file, output_file))
     if input_file.endswith('.dat') and output_file.endswith('.json'):
-        print ('converting cbor to json')
+        print('converting cbor to json')
         write_json(read_cbor(input_file), output_file)
     elif input_file.endswith('.json') and output_file.endswith('.dat'):
-        print ('converting json to cbor... not tested feature yet')
+        print('converting json to cbor')
         write_cbor(read_json(input_file), output_file)
+    else:
+        raise Exception("this conversion is not supported")
 
 
 def read_cbor(input_file):
@@ -49,16 +51,17 @@ def traverse(in_dict, out_dict):
     # base case?
     if not isinstance(in_dict, dict):
         return
-    for sec, val in in_dict.iteritems():
-        if isinstance(val, str):
+    for sec, val in in_dict.items():
+        try:
             out_dict[sec] = cbor.loads(val)
-        else:
+        except TypeError:
             out_dict[sec] = val
+        except Exception as e:
+            raise e
         traverse(out_dict[sec], out_dict[sec])
 
 
 def read_json(input_file):
-    json_dict = dict()
     with open(input_file, 'rb') as fp:
         data = json.load(fp)
     return data
@@ -72,8 +75,12 @@ def write_cbor(json_dict, output_file):
 
 
 def write_json(cbor_dict, output_file):
-    json_data = json.dumps(cbor_dict, sort_keys=True, indent=4, encoding='latin1')
-    with open(output_file, 'wb') as json_file:
+    try:
+        json_data = json.dumps(cbor_dict, sort_keys=True, indent=4)
+    except Exception:
+        print("failed to write json, will try it with latin1 encoding")
+        json_data = json.dumps(cbor_dict, sort_keys=True, indent=4, encoding='latin1')
+    with open(output_file, 'w') as json_file:
         json_file.write(json_data)
     return True
 
