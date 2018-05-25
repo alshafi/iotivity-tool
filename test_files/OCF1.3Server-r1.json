@@ -1,0 +1,108 @@
+{
+    "acl": {
+        "aclist2": [
+            {
+                "aceid": 1, 
+                "permission": 2, 
+                "resources": [
+                    {
+                        "href": "/oic/res"
+                    }, 
+                    {
+                        "href": "/oic/d"
+                    }, 
+                    {
+                        "href": "/oic/p"
+                    }
+                ], 
+                "subject": {
+                    "conntype": "anon-clear"
+                }
+            }, 
+            {
+                "aceid": 2, 
+                "permission": 2, 
+                "resources": [
+                    {
+                        "href": "/oic/res"
+                    }, 
+                    {
+                        "href": "/oic/d"
+                    }, 
+                    {
+                        "href": "/oic/p"
+                    }
+                ], 
+                "subject": {
+                    "conntype": "auth-crypt"
+                }
+            }, 
+            {
+                "aceid": 3, 
+                "permission": 6, 
+                "resources": [
+                    {
+                        "href": "/oic/sec/doxm"
+                    }
+                ], 
+                "subject": {
+                    "conntype": "anon-clear"
+                }
+            }, 
+            {
+                "aceid": 4, 
+                "permission": 6, 
+                "resources": [
+                    {
+                        "href": "/oic/sec/doxm"
+                    }
+                ], 
+                "subject": {
+                    "conntype": "auth-crypt"
+                }
+            }
+        ], 
+        "if": [
+            "oic.if.baseline"
+        ], 
+        "rowneruuid": "00000000-0000-0000-0000-000000000000", 
+        "rt": [
+            "oic.r.acl2"
+        ]
+    }, 
+    "doxm": {
+        "deviceuuid": "12345678-1234-1234-1234-123456789012", 
+        "devowneruuid": "00000000-0000-0000-0000-000000000000", 
+        "if": [
+            "oic.if.baseline"
+        ], 
+        "owned": false, 
+        "oxms": [
+            0
+        ], 
+        "oxmsel": 0, 
+        "rowneruuid": "00000000-0000-0000-0000-000000000000", 
+        "rt": [
+            "oic.r.doxm"
+        ], 
+        "sct": 9
+    }, 
+    "pstat": {
+        "cm": 2, 
+        "dos": {
+            "p": false, 
+            "s": 1
+        }, 
+        "if": [
+            "oic.if.baseline"
+        ], 
+        "isop": false, 
+        "om": 4, 
+        "rowneruuid": "00000000-0000-0000-0000-000000000000", 
+        "rt": [
+            "oic.r.pstat"
+        ], 
+        "sm": 4, 
+        "tm": 0
+    }
+}
