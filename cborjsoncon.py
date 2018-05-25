@@ -56,13 +56,15 @@ def traverse(in_dict, out_dict):
             out_dict[sec] = cbor.loads(val)
         except TypeError:
             out_dict[sec] = val
+        except ValueError:
+            out_dict[sec] = val
         except Exception as e:
             raise e
         traverse(out_dict[sec], out_dict[sec])
 
 
 def read_json(input_file):
-    with open(input_file, 'rb') as fp:
+    with open(input_file, 'r') as fp:
         data = json.load(fp)
     return data
 
