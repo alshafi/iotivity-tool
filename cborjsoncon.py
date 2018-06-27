@@ -2,6 +2,8 @@
 This tool basically converts json to cbor and vice versa
 """
 import cbor, json, sys, getopt
+_IS_PY3 = sys.version_info[0] >= 3
+
 __author__ = "Rami Alshafi"
 __email__ = "ralshafi@vtmgroup.com"
 __copyright__ = "Copyright 2017, VTM Group"
@@ -52,16 +54,19 @@ def traverse(in_dict, out_dict):
     if not isinstance(in_dict, dict):
         return
     for sec, val in in_dict.items():
-        try:
-            out_dict[sec] = cbor.loads(val)
-        except TypeError:
+        # workaround python 2 issue. cbor false pass the conversion of unicode as it is already converted
+        if not _IS_PY3 and isinstance(val, unicode):
             out_dict[sec] = val
-        except ValueError:
-            out_dict[sec] = val
-        except Exception as e:
-            raise e
+        else:
+            try:
+                out_dict[sec] = cbor.loads(val)
+            except TypeError:
+                out_dict[sec] = val
+            except ValueError:
+                out_dict[sec] = val
+            except Exception as e:
+                raise e
         traverse(out_dict[sec], out_dict[sec])
-
 
 def read_json(input_file):
     with open(input_file, 'r') as fp:
