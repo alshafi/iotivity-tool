@@ -1,7 +1,8 @@
 """
 This tool basically converts json to cbor and vice versa
 """
-import cbor, json, sys, getopt, os
+import cbor, json, sys, getopt, os, re
+
 _IS_PY3 = sys.version_info[0] >= 3
 
 __author__ = "Rami Alshafi"
@@ -46,11 +47,11 @@ def main(argv):
                 else:
                     continue
         for json_file in json_files:
-            output_file = output + get_output_file_name(json_file)
+            output_file = os.path.join(output, get_output_file_name(json_file))
             print('converting json input <{}> to cbor output <{}>'.format(json_file, output_file))
             write_cbor(read_json(json_file), output_file)
         for cbor_file in cbor_files:
-            output_file = output + get_output_file_name(cbor_file)
+            output_file = os.path.join(output, get_output_file_name(cbor_file))
             print('converting cbor input <{}> to json output <{}>'.format(cbor_file, output_file))
             write_json(read_cbor(cbor_file), output_file)
     elif os.path.isfile(input):
@@ -77,12 +78,12 @@ def read_cbor(input_file):
 
 
 def get_output_file_name(file_name):
-    out_dir_ = file_name.split("\\")
+    out_dir_ = re.split(r"\\|/", file_name)
     name_ = out_dir_[len(out_dir_) - 1]
     if name_.endswith(".json"):
-        return "\\" + name_.split(".json")[0] + ".dat"
+        return name_.split(".json")[0] + ".dat"
     elif name_.endswith(".dat"):
-        return "\\" + name_.split(".dat")[0] + ".json"
+        return name_.split(".dat")[0] + ".json"
     else:
         raise Exception("wrong file name <{}>".format(file_name))
 
@@ -123,6 +124,18 @@ def write_cbor(json_dict, output_file):
 def write_json(cbor_dict, output_file):
     try:
         json_data = json.dumps(cbor_dict, sort_keys=True, indent=4)
+    except TypeError:
+        if _IS_PY3:
+            def cast_byte_str(diction):
+                if diction['creds']:
+                    for cred in diction['creds']:
+                        if cred['privatedata']:
+                            cred['privatedata']['data'] = str(cred['privatedata']['data'])
+            if cbor_dict['cred']:
+                if cbor_dict['resetpf']['cred']:
+                    cast_byte_str(cbor_dict['resetpf']['cred'])
+                cast_byte_str(cbor_dict['cred'])
+            json_data = json.dumps(cbor_dict, sort_keys=True, indent=4)
     except Exception:
         print("failed to write json, will try it with latin1 encoding")
         json_data = json.dumps(cbor_dict, sort_keys=True, indent=4, encoding='latin1')
