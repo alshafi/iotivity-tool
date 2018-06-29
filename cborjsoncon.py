@@ -12,29 +12,32 @@ __status__ = "beta"
 
 
 def main(argv):
-    input_file = ''
-    output_file = ''
+    input = ''
+    output = ''
     try:
         opts, args = getopt.getopt(argv, 'hi:o:')
     except getopt.GetoptError:
-        print('cbor2json.py -i <input_file> -o <output_file>')
+        print('cbor2json.py -i <input file | input folder> -o <output file | output folder>')
         sys.exit(2)
     if len(opts) == 0:
-        print('cbor2json.py -i <input_file> -o <output_file>')
+        print('cbor2json.py -i <input file | input folder> -o <output file | output folder>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('cbor2json.py -i <input_file> -o <output_file>')
+            print('cbor2json.py -i <input file | input folder> -o <output file | output folder>')
             sys.exit()
         elif opt == '-i':
-            input_file = arg
+            input = arg
         elif opt == '-o':
-            output_file = arg
-    if os.path.isdir(input_file) and os.path.isdir(output_file):
-        # ToDo: include logs
+            output = arg
+    if os.path.isdir(input) and not os.path.isdir(output):
+        print("The given output folder is not found. Creating it...")
+        os.mkdir(output)
+    if os.path.isdir(input) and os.path.isdir(output):
+        print('input folder is <{}> and output folder is <{}>'.format(input, output))
         json_files = list()
         cbor_files = list()
-        for dirpath, dirnames, filenames in os.walk(input_file):
+        for dirpath, dirnames, filenames in os.walk(input):
             for file in filenames:
                 if file.endswith('.dat'):
                     cbor_files.append(os.path.join(dirpath, file))
@@ -42,27 +45,27 @@ def main(argv):
                     json_files.append(os.path.join(dirpath, file))
                 else:
                     continue
-        # ToDo: do the conversions
         for json_file in json_files:
-            print('converting json to cbor')
+            output_file = output + get_output_file_name(json_file)
+            print('converting json input <{}> to cbor output <{}>'.format(json_file, output_file))
             write_cbor(read_json(json_file), output_file)
         for cbor_file in cbor_files:
-            print('converting cbor to json')
+            output_file = output + get_output_file_name(cbor_file)
+            print('converting cbor input <{}> to json output <{}>'.format(cbor_file, output_file))
             write_json(read_cbor(cbor_file), output_file)
-    elif os.path.isfile(input_file) and os.path.isfile(output_file):
-        print('input file is <{}> and output file is <{}>'.format(input_file, output_file))
-        if input_file.endswith('.dat') and output_file.endswith('.json'):
-            print('converting cbor to json')
-            write_json(read_cbor(input_file), output_file)
-        elif input_file.endswith('.json') and output_file.endswith('.dat'):
-            print('converting json to cbor')
-            write_cbor(read_json(input_file), output_file)
+    elif os.path.isfile(input):
+        if input.endswith('.dat') and output.endswith('.json'):
+            print('converting cbor input <{}> to json output <{}>'.format(input, output))
+            write_json(read_cbor(input), output)
+        elif input.endswith('.json') and output.endswith('.dat'):
+            print('converting json input <{}> to cbor output <{}>'.format(input, output))
+            write_cbor(read_json(input), output)
         else:
-            raise Exception("This conversion is not supported. Please make sure you have the right file extensions"
-                            "got input file ({}) and output file({})".format(input_file, output_file))
+            raise Exception("This conversion is not supported. Please make sure you have the right file extensions."
+                            " Got input file <{}> and output file <{}>".format(input, output))
     else:
         raise Exception("Input and output files and/or directories are not valid! Both of them must be either files or "
-                        "directories. Got input ({}) and output ({})".format(input_file, output_file))
+                        "directories. Got input ({}) and output ({})".format(input, output))
 
 
 def read_cbor(input_file):
@@ -71,6 +74,17 @@ def read_cbor(input_file):
         data = cbor.load(fp)
         traverse(data, cbor_dict)
     return cbor_dict
+
+
+def get_output_file_name(file_name):
+    out_dir_ = file_name.split("\\")
+    name_ = out_dir_[len(out_dir_) - 1]
+    if name_.endswith(".json"):
+        return "\\" + name_.split(".json")[0] + ".dat"
+    elif name_.endswith(".dat"):
+        return "\\" + name_.split(".dat")[0] + ".json"
+    else:
+        raise Exception("wrong file name <{}>".format(file_name))
 
 
 def traverse(in_dict, out_dict):
