@@ -1,14 +1,14 @@
 """
 This tool basically converts json to cbor and vice versa
 """
-import cbor, json, sys, getopt
+import cbor, json, sys, getopt, os
 _IS_PY3 = sys.version_info[0] >= 3
 
 __author__ = "Rami Alshafi"
 __email__ = "ralshafi@vtmgroup.com"
 __copyright__ = "Copyright 2017, VTM Group"
-__version__ = "0.0.1"
-__status__ = "alpha"
+__version__ = "0.1.0"
+__status__ = "beta"
 
 
 def main(argv):
@@ -30,15 +30,39 @@ def main(argv):
             input_file = arg
         elif opt == '-o':
             output_file = arg
-    print ('input file is <{}> and output file is <{}>'.format(input_file, output_file))
-    if input_file.endswith('.dat') and output_file.endswith('.json'):
-        print('converting cbor to json')
-        write_json(read_cbor(input_file), output_file)
-    elif input_file.endswith('.json') and output_file.endswith('.dat'):
-        print('converting json to cbor')
-        write_cbor(read_json(input_file), output_file)
+    if os.path.isdir(input_file) and os.path.isdir(output_file):
+        # ToDo: include logs
+        json_files = list()
+        cbor_files = list()
+        for dirpath, dirnames, filenames in os.walk(input_file):
+            for file in filenames:
+                if file.endswith('.dat'):
+                    cbor_files.append(os.path.join(dirpath, file))
+                elif file.endswith('.json'):
+                    json_files.append(os.path.join(dirpath, file))
+                else:
+                    continue
+        # ToDo: do the conversions
+        for json_file in json_files:
+            print('converting json to cbor')
+            write_cbor(read_json(json_file), output_file)
+        for cbor_file in cbor_files:
+            print('converting cbor to json')
+            write_json(read_cbor(cbor_file), output_file)
+    elif os.path.isfile(input_file) and os.path.isfile(output_file):
+        print('input file is <{}> and output file is <{}>'.format(input_file, output_file))
+        if input_file.endswith('.dat') and output_file.endswith('.json'):
+            print('converting cbor to json')
+            write_json(read_cbor(input_file), output_file)
+        elif input_file.endswith('.json') and output_file.endswith('.dat'):
+            print('converting json to cbor')
+            write_cbor(read_json(input_file), output_file)
+        else:
+            raise Exception("This conversion is not supported. Please make sure you have the right file extensions"
+                            "got input file ({}) and output file({})".format(input_file, output_file))
     else:
-        raise Exception("this conversion is not supported")
+        raise Exception("Input and output files and/or directories are not valid! Both of them must be either files or "
+                        "directories. Got input ({}) and output ({})".format(input_file, output_file))
 
 
 def read_cbor(input_file):
@@ -67,6 +91,7 @@ def traverse(in_dict, out_dict):
             except Exception as e:
                 raise e
         traverse(out_dict[sec], out_dict[sec])
+
 
 def read_json(input_file):
     with open(input_file, 'r') as fp:
