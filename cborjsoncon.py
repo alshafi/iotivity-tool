@@ -33,6 +33,8 @@ def main(argv):
             output = arg
     if os.path.isdir(input) and not os.path.isdir(output):
         print("The given output folder is not found. Creating it...")
+        if output.endswith(".json") or output.endswith(".dat"):
+            raise Exception("the input was a folder so the output must be a folder!")
         os.mkdir(output)
     if os.path.isdir(input) and os.path.isdir(output):
         print('input folder is <{}> and output folder is <{}>'.format(input, output))
@@ -57,9 +59,11 @@ def main(argv):
     elif os.path.isfile(input):
         if input.endswith('.dat') and output.endswith('.json'):
             print('converting cbor input <{}> to json output <{}>'.format(input, output))
+            check_output_folder(output)
             write_json(read_cbor(input), output)
         elif input.endswith('.json') and output.endswith('.dat'):
             print('converting json input <{}> to cbor output <{}>'.format(input, output))
+            check_output_folder(output)
             write_cbor(read_json(input), output)
         else:
             raise Exception("This conversion is not supported. Please make sure you have the right file extensions."
@@ -75,6 +79,15 @@ def read_cbor(input_file):
         data = cbor.load(fp)
         traverse(data, cbor_dict)
     return cbor_dict
+
+
+def check_output_folder(file_name):
+    out_dir_ = re.split(r"\\|/", file_name)
+    out_dir_ = out_dir_[:len(out_dir_)-1]
+    out_dir_ = os.path.join(*out_dir_)
+    if not os.path.exists(out_dir_):
+        print("output file <{}> was pointed to a folder that does not exists so creating <{}>".format(file_name, out_dir_))
+        os.mkdir(out_dir_)
 
 
 def get_output_file_name(file_name):
