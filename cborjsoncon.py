@@ -109,6 +109,8 @@ def traverse(in_dict, out_dict):
         # workaround python 2 issue. cbor false pass the conversion of unicode as it is already converted
         if not _IS_PY3 and isinstance(val, unicode):
             out_dict[sec] = val
+        elif val == '':
+            out_dict[sec] = val
         else:
             try:
                 out_dict[sec] = cbor.loads(val)
