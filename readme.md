@@ -22,13 +22,17 @@ However, the pressing reason for making this tool was converting cbor back to js
 note this is not a normal json2cbor conversion !!!
 
 # Dependencies
-This tool depends on the [cbor](https://bitbucket.org/bodhisnarkva/cbor) package. To install it, you can either use the requirements file with the following command
+This tool depends on the [cbor](https://bitbucket.org/bodhisnarkva/cbor) package, so make sure it is installed before using the tool.
+However you install it is up to you! There are many ways to install python dependencies and there are many good dependency management practices and there are different methods depending on your OS. Tackling the issues related to the python dependency management is way outside the scope of this document but the quick and dirty way if you have Linux is this:  
+you can either use the requirements file with the following command
 
 `$sudo pip install -r requirements.txt`
 
 Or this command to install cbor alone, which is the only dependency so far
 
-`$sudo pip install cbor`
+`$sudo pip install cbor`  
+Please consider using virtual environments like [virtualenv](https://virtualenv.pypa.io/en/latest/) especially if you are sharing your computer or have other python projects that could depend on the same dependencies as this tool and required different versions of the dependency.  
+ if you are interested to learn more about python dependency management and virtualenv, i would recommend this [tutorial](https://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/) and the [Python Packaging Guide](https://packaging.python.org/)
 
 # Usage
 
