@@ -83,11 +83,12 @@ def read_cbor(input_file):
 
 def check_output_folder(file_name):
     out_dir_ = re.split(r"\\|/", file_name)
-    out_dir_ = out_dir_[:len(out_dir_)-1]
-    out_dir_ = os.path.join(*out_dir_)
-    if not os.path.exists(out_dir_):
-        print("output file <{}> was pointed to a folder that does not exists so creating <{}>".format(file_name, out_dir_))
-        os.mkdir(out_dir_)
+    if len(out_dir_) > 1:
+        out_dir_ = out_dir_[:len(out_dir_)-1]
+        out_dir_ = os.path.join(*out_dir_)
+        if not os.path.exists(out_dir_):
+            print("output file <{}> was pointed to a folder that does not exists so creating <{}>".format(file_name, out_dir_))
+            os.mkdir(out_dir_)
 
 
 def get_output_file_name(file_name):
