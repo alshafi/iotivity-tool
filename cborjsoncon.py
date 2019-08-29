@@ -38,20 +38,13 @@ def main(argv):
         os.mkdir(output)
     if os.path.isdir(input) and os.path.isdir(output):
         print('input folder is <{}> and output folder is <{}>'.format(input, output))
-        json_files = list()
         cbor_files = list()
         for dirpath, dirnames, filenames in os.walk(input):
             for file in filenames:
                 if file.endswith('.dat'):
                     cbor_files.append(os.path.join(dirpath, file))
-                elif file.endswith('.json'):
-                    json_files.append(os.path.join(dirpath, file))
                 else:
                     continue
-        for json_file in json_files:
-            output_file = os.path.join(output, get_output_file_name(json_file))
-            print('converting json input <{}> to cbor output <{}>'.format(json_file, output_file))
-            write_cbor(read_json(json_file), output_file)
         for cbor_file in cbor_files:
             output_file = os.path.join(output, get_output_file_name(cbor_file))
             print('converting cbor input <{}> to json output <{}>'.format(cbor_file, output_file))
@@ -62,9 +55,9 @@ def main(argv):
             check_output_folder(output)
             write_json(read_cbor(input), output)
         elif input.endswith('.json') and output.endswith('.dat'):
-            print('converting json input <{}> to cbor output <{}>'.format(input, output))
-            check_output_folder(output)
-            write_cbor(read_json(input), output)
+            print('converting json input <{}> to cbor output <{}> has been unreliable using this tool\
+             and it is not recommended. Existing... '.format(input, output))
+            sys.exit(2)
         else:
             raise Exception("This conversion is not supported. Please make sure you have the right file extensions."
                             " Got input file <{}> and output file <{}>".format(input, output))
